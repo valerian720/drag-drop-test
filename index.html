@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
+      crossorigin="anonymous"
+    />
+    <title>Drag to slot</title>
+    <style>
+      body {
+        font-family: "Benton Sans", "Helvetica Neue", helvetica, arial,
+          sans-serif;
+        margin: 2em;
+      }
+
+      .container {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+      }
+
+      .box {
+        border: 3px solid #666;
+        background-color: #ddd;
+        border-radius: 0.5em;
+        padding: 10px;
+        cursor: move;
+      }
+
+      .box.none {
+        border: none;
+        background-color: white;
+        border-radius: 0.5em;
+        padding: 10px;
+        cursor: crosshair;
+      }
+
+      .box.over {
+        border: 3px dotted #666;
+      }
+
+      [draggable] {
+        user-select: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container m-1 p-1">
+      <div draggable="true" class="box">Boxes</div>
+      <div draggable="true" class="box">A</div>
+      <div draggable="true" class="box">B</div>
+      <div draggable="true" class="box">C</div>
+    </div>
+    <div class="container m-1 p-1">
+      <div class="box">slots</div>
+      <div class="box none"></div>
+      <div class="box none"></div>
+      <div class="box none"></div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", (event) => {
+        function handleDragStart(e) {
+          this.style.opacity = "0.4";
+
+          dragSrcEl = this;
+          e.dataTransfer.effectAllowed = "move";
+          e.dataTransfer.setData("text/plain", this.innerText);
+        }
+
+        function handleDragEnd(e) {
+          this.style.opacity = "1";
+        }
+
+        function handleDrop(e) {
+          e.stopPropagation();
+
+          if (dragSrcEl !== this && this.innerText == "" ) {
+            dragSrcEl.innerText = this.innerText;
+            this.innerText = e.dataTransfer.getData("text/plain");
+            
+            // set dragSrcEl as draggable
+            console.log("dragSrcEl.classList", dragSrcEl.classList);
+            dragSrcEl.classList.add("none");
+            dragSrcEl.setAttribute('draggable', false);
+            
+            // set this as not draggable
+            console.log("this.classList", this.classList);
+            this.classList.remove("none");
+            this.classList.remove("over");
+            this.setAttribute('draggable', true);
+          }
+
+          return false;
+        }
+
+        function handleDragOver(e) {
+          if (e.preventDefault) {
+            e.preventDefault();
+          }
+          return false;
+        }
+
+        function handleDragEnter(e) {
+          if (this.textContent === "") this.classList.add("over");
+        }
+
+        function handleDragLeave(e) {
+          this.classList.remove("over");
+        }
+
+        let items = document.querySelectorAll(".container .box");
+        items.forEach(function (item) {
+          item.addEventListener("dragstart", handleDragStart, false);
+          item.addEventListener("dragover", handleDragOver, false);
+          item.addEventListener("dragenter", handleDragEnter, false);
+          item.addEventListener("dragleave", handleDragLeave, false);
+          item.addEventListener("dragend", handleDragEnd, false);
+          item.addEventListener("drop", handleDrop);
+        });
+      });
+    </script>
+  </body>
+</html>
