@@ -22,7 +22,7 @@
 
       .container {
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: 10px;
       }
 
@@ -53,7 +53,7 @@
   </head>
   <body>
     <div class="container m-1 p-1">
-      <div draggable="true" class="box">Boxes</div>
+      <div class="box">Boxes</div>
       <div draggable="true" class="box">A</div>
       <div draggable="true" class="box">B</div>
       <div draggable="true" class="box">C</div>
@@ -78,6 +78,10 @@
           dragSrcEl = this;
           e.dataTransfer.effectAllowed = "move";
           e.dataTransfer.setData("text/plain", this.innerText);
+          // 
+          var img = document.createElement("img");
+          img.src = "none";
+          e.dataTransfer.setDragImage(img, 5000, 5000);//5000 will be out of the window
         }
 
         function handleDragEnd(e) {
@@ -128,7 +132,7 @@
           item.addEventListener("dragenter", handleDragEnter, false);
           item.addEventListener("dragleave", handleDragLeave, false);
           item.addEventListener("dragend", handleDragEnd, false);
-          item.addEventListener("drop", handleDrop);
+          item.addEventListener("drop", handleDrop, false);
         });
       });
     </script>
